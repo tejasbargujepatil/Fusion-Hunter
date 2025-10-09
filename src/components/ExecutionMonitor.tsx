@@ -1,79 +1,17 @@
-import { useState, useEffect } from "react";
 import { Terminal, CheckCircle, XCircle, AlertCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-
-interface LogEntry {
-  timestamp: string;
-  endpoint: string;
-  payload: string;
-  status: "success" | "failure" | "error";
-  response: string;
-  latency: number;
-}
+import { useScan } from "@/contexts/ScanContext";
 
 const ExecutionMonitor = () => {
-  const [logs, setLogs] = useState<LogEntry[]>([
-    {
-      timestamp: "14:32:45.123",
-      endpoint: "/api/login",
-      payload: "' OR '1'='1",
-      status: "success",
-      response: "HTTP 200 - Reflection detected",
-      latency: 124
-    },
-    {
-      timestamp: "14:32:46.891",
-      endpoint: "/search?q=",
-      payload: "<script>alert(1)</script>",
-      status: "success",
-      response: "HTTP 200 - XSS vector confirmed",
-      latency: 87
-    },
-    {
-      timestamp: "14:32:48.234",
-      endpoint: "/api/products",
-      payload: "1' UNION SELECT NULL--",
-      status: "failure",
-      response: "HTTP 403 - WAF blocked",
-      latency: 45
-    },
-    {
-      timestamp: "14:32:49.567",
-      endpoint: "/admin/dashboard",
-      payload: "../../etc/passwd",
-      status: "error",
-      response: "HTTP 500 - Server error",
-      latency: 201
-    },
-  ]);
+  const { scanState } = useScan();
 
-  const [isLive, setIsLive] = useState(true);
-
-  useEffect(() => {
-    if (!isLive) return;
-
-    const interval = setInterval(() => {
-      const newLog: LogEntry = {
-        timestamp: new Date().toLocaleTimeString('en-US', { hour12: false }) + '.' + Math.floor(Math.random() * 1000),
-        endpoint: ["/api/users", "/api/orders", "/search", "/login"][Math.floor(Math.random() * 4)],
-        payload: ["' OR 1=1--", "<img src=x>", "admin'--", "UNION SELECT"][Math.floor(Math.random() * 4)],
-        status: ["success", "failure", "error"][Math.floor(Math.random() * 3)] as LogEntry["status"],
-        response: "HTTP " + [200, 403, 500][Math.floor(Math.random() * 3)] + " - " + ["Detected", "Blocked", "Error"][Math.floor(Math.random() * 3)],
-        latency: Math.floor(Math.random() * 300) + 20
-      };
-      setLogs(prev => [newLog, ...prev].slice(0, 20));
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, [isLive]);
-
-  const getStatusIcon = (status: LogEntry["status"]) => {
+  const getStatusIcon = (status: 'success' | 'failed' | 'error') => {
     switch (status) {
       case "success":
         return <CheckCircle className="w-4 h-4 text-primary" />;
-      case "failure":
+      case "failed":
         return <XCircle className="w-4 h-4 text-muted-foreground" />;
       case "error":
         return <AlertCircle className="w-4 h-4 text-destructive" />;
@@ -108,8 +46,13 @@ const ExecutionMonitor = () => {
         </CardHeader>
         <CardContent>
           <ScrollArea className="h-[500px] w-full rounded border border-border bg-terminal-bg p-4">
-            <div className="space-y-2 font-mono text-sm">
-              {logs.map((log, idx) => (
+            {scanState.logs.length === 0 ? (
+              <div className="flex items-center justify-center h-full text-muted-foreground">
+                No execution logs yet. Start testing to see results.
+              </div>
+            ) : (
+              <div className="space-y-2 font-mono text-sm">
+                {scanState.logs.map((log, idx) => (
                 <div
                   key={idx}
                   className={`flex items-start gap-3 p-2 rounded transition-all ${
@@ -147,8 +90,9 @@ const ExecutionMonitor = () => {
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </ScrollArea>
         </CardContent>
       </Card>
@@ -159,7 +103,7 @@ const ExecutionMonitor = () => {
           <CardContent className="pt-6">
             <div className="text-center">
               <div className="text-3xl font-bold text-primary mb-1">
-                {logs.filter(l => l.status === "success").length}
+                {scanState.logs.filter(l => l.status === "success").length}
               </div>
               <div className="text-sm text-muted-foreground">Successful Detections</div>
             </div>
@@ -169,7 +113,7 @@ const ExecutionMonitor = () => {
           <CardContent className="pt-6">
             <div className="text-center">
               <div className="text-3xl font-bold text-muted-foreground mb-1">
-                {logs.filter(l => l.status === "failure").length}
+                {scanState.logs.filter(l => l.status === "failed").length}
               </div>
               <div className="text-sm text-muted-foreground">Blocked Attempts</div>
             </div>
@@ -179,7 +123,7 @@ const ExecutionMonitor = () => {
           <CardContent className="pt-6">
             <div className="text-center">
               <div className="text-3xl font-bold text-destructive mb-1">
-                {logs.filter(l => l.status === "error").length}
+                {scanState.logs.filter(l => l.status === "error").length}
               </div>
               <div className="text-sm text-muted-foreground">Errors</div>
             </div>

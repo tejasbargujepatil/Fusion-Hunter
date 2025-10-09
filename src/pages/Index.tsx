@@ -1,8 +1,9 @@
-import { useState } from "react";
-import { Shield, Globe, Zap, Terminal, Brain, FileText } from "lucide-react";
+import { Shield, Globe, Zap, Terminal, Brain, FileText, Bug } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ScanProvider } from "@/contexts/ScanContext";
 import Dashboard from "@/components/Dashboard";
 import CrawlerModule from "@/components/CrawlerModule";
+import VulnerabilityScanner from "@/components/VulnerabilityScanner";
 import PayloadGenerator from "@/components/PayloadGenerator";
 import ExecutionMonitor from "@/components/ExecutionMonitor";
 import LearningEngine from "@/components/LearningEngine";
@@ -10,6 +11,7 @@ import ReportGenerator from "@/components/ReportGenerator";
 
 const Index = () => {
   return (
+    <ScanProvider>
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
@@ -37,7 +39,7 @@ const Index = () => {
       {/* Main Content */}
       <main className="container mx-auto px-6 py-8">
         <Tabs defaultValue="dashboard" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-6 bg-secondary mb-8">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-7 bg-secondary mb-8">
             <TabsTrigger 
               value="dashboard" 
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
@@ -51,6 +53,13 @@ const Index = () => {
             >
               <Globe className="w-4 h-4 mr-2" />
               <span className="hidden sm:inline">Crawler</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="scanner"
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
+              <Bug className="w-4 h-4 mr-2" />
+              <span className="hidden sm:inline">Scanner</span>
             </TabsTrigger>
             <TabsTrigger 
               value="payload"
@@ -90,6 +99,10 @@ const Index = () => {
             <CrawlerModule />
           </TabsContent>
 
+          <TabsContent value="scanner" className="mt-0">
+            <VulnerabilityScanner />
+          </TabsContent>
+
           <TabsContent value="payload" className="mt-0">
             <PayloadGenerator />
           </TabsContent>
@@ -126,6 +139,7 @@ const Index = () => {
         </div>
       </footer>
     </div>
+    </ScanProvider>
   );
 };
 

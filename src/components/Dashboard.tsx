@@ -1,23 +1,10 @@
-import { Activity, Shield, Target, Zap, AlertTriangle, CheckCircle } from "lucide-react";
+import { Activity, Shield, Target, Zap, AlertTriangle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useScan } from "@/contexts/ScanContext";
 
 const Dashboard = () => {
-  const systemStats = {
-    endpointsScanned: 247,
-    vulnerabilitiesFound: 12,
-    payloadsGenerated: 1543,
-    successRate: 78.4,
-    activeScans: 3,
-    lastScanTime: "2m ago"
-  };
-
-  const recentFindings = [
-    { type: "SQLi", endpoint: "/api/login", severity: "critical", time: "1m ago" },
-    { type: "XSS", endpoint: "/search?q=", severity: "high", time: "3m ago" },
-    { type: "Auth Bypass", endpoint: "/admin/dashboard", severity: "critical", time: "5m ago" },
-    { type: "SQLi", endpoint: "/products/view", severity: "medium", time: "8m ago" },
-  ];
+  const { scanState } = useScan();
 
   return (
     <div className="space-y-6">
@@ -47,9 +34,9 @@ const Dashboard = () => {
             <Target className="w-4 h-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-primary">{systemStats.endpointsScanned}</div>
+            <div className="text-2xl font-bold text-primary">{scanState.statistics.endpointsScanned}</div>
             <p className="text-xs text-muted-foreground mt-1">
-              Last scan: {systemStats.lastScanTime}
+              Last: {scanState.targetUrl || 'None'}
             </p>
           </CardContent>
         </Card>
@@ -62,9 +49,9 @@ const Dashboard = () => {
             <AlertTriangle className="w-4 h-4 text-destructive" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-destructive">{systemStats.vulnerabilitiesFound}</div>
+            <div className="text-2xl font-bold text-destructive">{scanState.statistics.vulnerabilitiesFound}</div>
             <p className="text-xs text-muted-foreground mt-1">
-              {recentFindings.filter(f => f.severity === 'critical').length} critical
+              {scanState.vulnerabilities.filter(f => f.severity === 'Critical').length} critical
             </p>
           </CardContent>
         </Card>
@@ -77,7 +64,7 @@ const Dashboard = () => {
             <Zap className="w-4 h-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-primary">{systemStats.payloadsGenerated}</div>
+            <div className="text-2xl font-bold text-primary">{scanState.statistics.payloadsGenerated}</div>
             <p className="text-xs text-muted-foreground mt-1">
               Mutation-based adaptation
             </p>
@@ -92,7 +79,7 @@ const Dashboard = () => {
             <Activity className="w-4 h-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-primary">{systemStats.successRate}%</div>
+            <div className="text-2xl font-bold text-primary">{scanState.statistics.successRate}%</div>
             <p className="text-xs text-muted-foreground mt-1">
               UCB1 algorithm learning
             </p>
@@ -109,32 +96,40 @@ const Dashboard = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
-            {recentFindings.map((finding, idx) => (
-              <div
-                key={idx}
-                className="flex items-center justify-between p-3 rounded border border-border bg-terminal-bg hover:border-primary/40 transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <Badge
-                    variant={finding.severity === 'critical' ? 'destructive' : 'secondary'}
-                    className={finding.severity === 'critical' ? 'bg-destructive text-destructive-foreground' : 'bg-warning text-warning-foreground'}
-                  >
-                    {finding.type}
-                  </Badge>
-                  <code className="text-sm text-muted-foreground font-mono">
-                    {finding.endpoint}
-                  </code>
+          {scanState.vulnerabilities.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              No vulnerabilities detected yet
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {scanState.vulnerabilities.slice(0, 5).map((finding, idx) => (
+                <div
+                  key={idx}
+                  className="flex items-center justify-between p-3 rounded border border-border bg-terminal-bg hover:border-primary/40 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <Badge
+                      variant={finding.severity === 'Critical' ? 'destructive' : 'secondary'}
+                      className={finding.severity === 'Critical' ? 'bg-destructive text-destructive-foreground' : 'bg-warning text-warning-foreground'}
+                    >
+                      {finding.type}
+                    </Badge>
+                    <code className="text-sm text-muted-foreground font-mono">
+                      {finding.endpoint}
+                    </code>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-muted-foreground">
+                      {new Date(finding.timestamp).toLocaleTimeString()}
+                    </span>
+                    <Badge variant="outline" className="border-primary/30 text-primary">
+                      {finding.severity}
+                    </Badge>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-xs text-muted-foreground">{finding.time}</span>
-                  <Badge variant="outline" className="border-primary/30 text-primary">
-                    {finding.severity}
-                  </Badge>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -143,7 +138,7 @@ const Dashboard = () => {
         <CardHeader>
           <CardTitle className="text-lg text-primary flex items-center gap-2">
             <Activity className="w-5 h-5 animate-pulse" />
-            Active Scanning Operations ({systemStats.activeScans})
+            Active Scanning Operations ({scanState.statistics.activeScans})
           </CardTitle>
         </CardHeader>
         <CardContent>
