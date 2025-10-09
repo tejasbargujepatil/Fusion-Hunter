@@ -9,6 +9,7 @@ import { Progress } from "@/components/ui/progress";
 const CrawlerModule = () => {
   const [isScanning, setIsScanning] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [targetUrl, setTargetUrl] = useState("http://localhost:3000");
 
   const discoveredEndpoints = [
     { url: "/api/users", method: "GET", params: ["id", "email"], forms: 0 },
@@ -53,8 +54,10 @@ const CrawlerModule = () => {
         <CardContent className="space-y-4">
           <div className="flex gap-3">
             <Input
-              placeholder="Target URL (e.g., http://localhost:3000)"
-              defaultValue="http://localhost:3000"
+              placeholder="Target URL (e.g., https://example.com)"
+              value={targetUrl}
+              onChange={(e) => setTargetUrl(e.target.value)}
+              disabled={isScanning}
               className="font-mono bg-terminal-bg border-primary/30"
             />
             <Button
@@ -79,7 +82,7 @@ const CrawlerModule = () => {
           {isScanning && (
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Crawling endpoints...</span>
+                <span className="text-muted-foreground">Scanning {targetUrl}...</span>
                 <span className="text-primary font-mono">{progress}%</span>
               </div>
               <Progress value={progress} className="h-2" />
