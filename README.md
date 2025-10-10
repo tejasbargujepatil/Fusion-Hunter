@@ -1,75 +1,109 @@
-# Welcome to your Lovable project
 
-## Project info
+# 🔥 Fusion Hunter – AI-Powered Vulnerability Scanner
 
-**URL**: https://lovable.dev/projects/39e4fbfb-a984-47b2-b86c-1c6d7609cb83
+**Fusion Hunter** is an advanced AI-driven vulnerability scanning engine designed to **automatically detect, analyze, and learn** from security weaknesses across web applications.
+It combines automated crawling, adaptive payload generation, and a self-learning engine to improve detection accuracy with every scan.
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## 🚀 Features
 
-**Use Lovable**
+* 🌐 **Smart Crawler** – Automatically discovers hidden endpoints and parameters.
+* 🧠 **Adaptive Learning Engine** – Improves detection success rate with every test using reinforcement learning.
+* 🧪 **Advanced Vulnerability Detection** – Detects SQLi, XSS, CSRF, SSRF, IDOR, Authentication Bypass, and more.
+* 📊 **Real-Time Dashboard** – Visualizes scan progress, success rates, and vulnerability severity.
+* 📁 **Report Generation** – Auto-generates scan reports (JSON/PDF) with remediation suggestions.
+* 📚 **Per-Endpoint Strategy Optimization** – Tailors payload strategies for each endpoint.
+* ☁️ **Database Integration** – Stores all scan results and reports for future reference.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/39e4fbfb-a984-47b2-b86c-1c6d7609cb83) and start prompting.
+---
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🛠️ Tech Stack
 
-**Use your preferred IDE**
+* ⚛️ **Frontend**: React + TypeScript + Vite
+* 🎨 **UI**: Tailwind CSS + shadcn-ui
+* 🔙 **Backend**: FastAPI + SQLModel + Uvicorn
+* 🗄️ **Database**: SQL  – can be replaced with PostgreSQL/MySQL
+* 🤖 **Learning Layer**: UCB1 Bandit Algorithm + Adaptive Strategy Selection
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+---
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## 📂 Project Structure
 
-Follow these steps:
+```
+fusion-hunter/
+├── frontend/                  # React frontend
+│   ├── components/           # UI components
+│   ├── pages/                # Main scanner & dashboard
+│   └── ...
+├── backend/                  # FastAPI backend
+│   ├── app/
+│   │   ├── main.py           # API & WebSocket server
+│   │   ├── db.py             # Database config
+│   │   ├── models.py         # Database models
+│   │   └── routes.py         # API routes
+│   └── ...
+└── README.md
+```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+---
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## 🧪 Run Locally
 
-# Step 3: Install the necessary dependencies.
-npm i
+### 1️⃣ Clone the Repository
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+```bash
+git clone https://github.com/tejasbargujepatil/Fusion-Hunter
+cd fusion-hunter
+```
+
+### 2️⃣ Install Frontend Dependencies
+
+```bash
+cd frontend
+npm install
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+Frontend will start on [http://localhost:3000](http://localhost:3000)
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### 3️⃣ Set Up Backend
 
-**Use GitHub Codespaces**
+```bash
+cd backend
+python -m venv .venv
+.venv\Scripts\activate  # (Windows)
+source .venv/bin/activate  # (macOS/Linux)
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+pip install -r requirements.txt
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8080 --reload
+```
 
-## What technologies are used for this project?
+Backend will start on [http://localhost:8080/docs](http://localhost:8080/docs)
 
-This project is built with:
+---
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 📊 Example Use Case
 
-## How can I deploy this project?
+1. Enter your **target URL** into the crawler.
+2. Fusion Hunter will automatically start scanning endpoints.
+3. Vulnerabilities are analyzed, scored, and stored in the database.
+4. Generate a detailed security report with remediation guidance.
 
-Simply open [Lovable](https://lovable.dev/projects/39e4fbfb-a984-47b2-b86c-1c6d7609cb83) and click on Share -> Publish.
+---
 
-## Can I connect a custom domain to my Lovable project?
+## 📈 Future Enhancements
 
-Yes, you can!
+* 🔐 Integrate with CI/CD pipelines for continuous security testing.
+* 🤝 Add GitHub Actions for automated vulnerability scans on push.
+* 📡 Enable remote scans across multiple targets concurrently.
+* 📊 AI-driven vulnerability prediction based on historical data.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+---
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
-# Fusion-Hunter
-# Fusion-Hunter
+## 📜 License
+
+This project is licensed under the **MIT License** – feel free to use and modify it.
+
+---
+
