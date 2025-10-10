@@ -1,6 +1,11 @@
 
 # 🔥 Fusion Hunter – AI-Powered Vulnerability Scanner
 
+```
+# Fusion Hunter AI  Backend Code: https://github.com/tejasbargujepatil/Backend
+
+```
+
 **Fusion Hunter** is an advanced AI-driven vulnerability scanning engine designed to **automatically detect, analyze, and learn** from security weaknesses across web applications.
 It combines automated crawling, adaptive payload generation, and a self-learning engine to improve detection accuracy with every scan.
 
